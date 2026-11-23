@@ -117,7 +117,23 @@ class TransferEngine(context: Context) {
     init {
         hotspot.onNetworkChanged = {
             _addresses.value = NetUtils.localIpv4()
+            // 网络换了，之前手动/网关添加的设备大概率已不可达
+            manual.value = emptyMap()
+            radar.resetSocket()
             radar.refresh()
+        }
+        // 连上对方热点后，网关就是开热点的那台手机：直接按 IP 连过去，不依赖 UDP 广播
+        hotspot.onHostGateway = { ip ->
+            scope.launch {
+                for (attempt in 1..3) {
+                    val r = probe(ip)
+                    if (r.isSuccess) {
+                        events.tryEmit("已连接到「${r.getOrNull()?.name}」，可以开始互传了")
+                        break
+                    }
+                    delay(1500)
+                }
+            }
         }
     }
 
@@ -130,6 +146,7 @@ class TransferEngine(context: Context) {
         started = true
         _serverOn.value = server.start()
         radar.start()
+        hotspot.startAutoBind()
         tickJob = scope.launch { tickLoop() }
     }
 
@@ -144,6 +161,7 @@ class TransferEngine(context: Context) {
         server.stop()
         hotspot.stopHost()
         hotspot.leave()
+        hotspot.stopAutoBind()
         _serverOn.value = false
     }
 

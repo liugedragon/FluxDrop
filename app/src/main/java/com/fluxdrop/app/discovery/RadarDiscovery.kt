@@ -106,6 +106,14 @@ class RadarDiscovery(
         kick.trySend(Unit)
     }
 
+    /** 网络切换后重建监听 socket（关闭后 listenLoop 会自动重新创建） */
+    fun resetSocket() {
+        try {
+            socket?.close()
+        } catch (_: Exception) {
+        }
+    }
+
     private suspend fun listenLoop() {
         while (currentCoroutineContext().isActive) {
             val s = try {

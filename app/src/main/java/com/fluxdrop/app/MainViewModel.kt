@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.fluxdrop.app.core.BUF_SIZE
 import com.fluxdrop.app.core.Device
 import com.fluxdrop.app.core.PickedFile
+import com.fluxdrop.app.hotspot.HotspotInfo
 import com.fluxdrop.app.hotspot.HotspotManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -150,6 +151,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun startHotspot() = engine.hotspot.startHost()
     fun stopHotspot() = engine.hotspot.stopHost()
     fun leaveHotspot() = engine.hotspot.leave()
+    fun restartHotspot() = engine.hotspot.restartHost()
+    fun systemConnectIntent(info: HotspotInfo): Intent = engine.hotspot.systemConnectIntent(info)
+    fun markSystemConnecting(info: HotspotInfo) = engine.hotspot.markSystemConnecting(info)
+    fun retryJoin(info: HotspotInfo) = engine.hotspot.join(info)
 
     fun onScanResult(text: String?) {
         if (text.isNullOrBlank()) return
