@@ -1,0 +1,32 @@
+*.iml
+.gradle/
+/local.properties
+/.idea/
+.DS_Store
+/build/
+/app/build/
+/captures/
+.externalNativeBuild/
+.cxx/
+
+# Kotlin and generated packages
+/.kotlin/
+**/build/
+*.apk
+*.aab
+
+# Local credentials and signing material
+.env
+.env.*
+!.env.example
+*.jks
+*.keystore
+*.p12
+*.pfx
+keystore.properties
+key.properties
+secrets.properties
+
+# Local tool caches
+__pycache__/
+*.pyc

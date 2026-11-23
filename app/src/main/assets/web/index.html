@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>闪渡 · 网页版</title>
+<style>
+:root{--bg:#060914;--card:rgba(255,255,255,.055);--border:rgba(255,255,255,.12);--hi:#F1F5FF;--mid:#A9B4D6;--low:#6B7699;--cyan:#22D3EE;--violet:#8B5CF6;--pink:#EC4899;--mint:#34D399;--red:#F87171;--amber:#FBBF24;--grad:linear-gradient(120deg,#22D3EE,#8B5CF6 55%,#EC4899)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:var(--bg);color:var(--hi);font-family:"PingFang SC","Microsoft YaHei","Segoe UI",system-ui,sans-serif;overflow-x:hidden}
+.aurora{position:fixed;inset:0;z-index:-1;overflow:hidden}
+.aurora i{position:absolute;border-radius:50%;filter:blur(90px);opacity:.45;animation:float 18s ease-in-out infinite alternate}
+.aurora i:nth-child(1){width:55vw;height:55vw;background:#5b21b6;top:-18vw;left:-12vw}
+.aurora i:nth-child(2){width:42vw;height:42vw;background:#0e7490;top:28vh;right:-14vw;animation-delay:-6s}
+.aurora i:nth-child(3){width:48vw;height:48vw;background:#9d174d;bottom:-26vw;left:22vw;animation-delay:-12s;opacity:.3}
+@keyframes float{to{transform:translate(6vw,5vh) scale(1.12)}}
+.wrap{max-width:1100px;margin:0 auto;padding:34px 20px 60px}
+header{display:flex;align-items:center;gap:16px;margin-bottom:30px}
+.logo{width:54px;height:54px;border-radius:17px;background:var(--grad);display:grid;place-items:center;box-shadow:0 12px 40px rgba(139,92,246,.5)}
+.logo svg{width:30px;height:30px}
+h1{font-size:30px;font-weight:900;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:2px}
+.sub{color:var(--mid);font-size:14px;margin-top:3px;display:flex;align-items:center;gap:8px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--mint);box-shadow:0 0 12px var(--mint);animation:pulse 1.6s infinite}
+.dot.off{background:var(--red);box-shadow:0 0 12px var(--red)}
+@keyframes pulse{50%{opacity:.35}}
+.grid{display:grid;grid-template-columns:1.1fr .9fr;gap:20px}
+@media(max-width:860px){.grid{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--border);border-radius:26px;padding:24px;backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px)}
+.card h2{font-size:17px;font-weight:800;display:flex;align-items:center;gap:10px}
+.card h2 svg{width:20px;height:20px}
+.hint{color:var(--low);font-size:13px;margin:6px 0 18px;line-height:1.6}
+.drop{display:block;border-radius:22px;border:2px dashed rgba(34,211,238,.35);padding:48px 20px;text-align:center;cursor:pointer;transition:.25s;background:rgba(34,211,238,.035)}
+.drop:hover,.drop.over{border-color:var(--cyan);background:rgba(34,211,238,.10);transform:scale(1.01)}
+.drop .icon{width:76px;height:76px;margin:0 auto 16px;border-radius:50%;background:var(--grad);display:grid;place-items:center;box-shadow:0 0 0 12px rgba(139,92,246,.12),0 0 0 26px rgba(139,92,246,.05);animation:bob 3s ease-in-out infinite}
+.drop .icon svg{width:34px;height:34px}
+@keyframes bob{50%{transform:translateY(-6px)}}
+.drop b{font-size:18px;display:block;margin-bottom:6px}
+.drop span{color:var(--mid);font-size:13px}
+.list{display:flex;flex-direction:column;gap:10px;margin-top:16px}
+.item{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);animation:in .35s ease}
+@keyframes in{from{opacity:0;transform:translateY(10px)}}
+.ficon{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;font-size:10px;font-weight:900;flex-shrink:0;color:#fff;letter-spacing:.5px}
+.meta{flex:1;min-width:0}
+.name{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.info{font-size:12px;color:var(--low);margin-top:3px}
+.bar{height:6px;border-radius:6px;background:rgba(255,255,255,.08);margin-top:8px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--grad);border-radius:6px;transition:width .2s linear}
+.bar.done i{background:linear-gradient(90deg,#34D399,#22D3EE)}
+.bar.fail i{background:linear-gradient(90deg,#F87171,#EC4899)}
+.btn{border:0;border-radius:13px;padding:9px 16px;font-weight:800;font-size:13px;color:#fff;background:var(--grad);cursor:pointer;transition:.2s;white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.btn:hover{filter:brightness(1.12);transform:translateY(-1px)}
+.btn.ghost{background:rgba(255,255,255,.08);border:1px solid var(--border)}
+.tag{font-size:12px;font-weight:800;white-space:nowrap}
+.ok{color:var(--mint)}.err{color:var(--red)}.wait{color:var(--amber)}
+.empty{color:var(--low);text-align:center;padding:36px 10px;font-size:13px;line-height:1.8}
+.empty b{color:var(--mid)}
+.overall{display:none;margin-top:16px;padding:16px;border-radius:18px;background:rgba(139,92,246,.10);border:1px solid rgba(139,92,246,.28)}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.toast{position:fixed;left:50%;bottom:32px;transform:translateX(-50%) translateY(20px);background:rgba(17,24,52,.96);border:1px solid var(--border);padding:12px 22px;border-radius:14px;font-size:14px;opacity:0;transition:.3s;pointer-events:none;box-shadow:0 10px 40px rgba(0,0,0,.4)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+footer{color:var(--low);font-size:12px;text-align:center;margin-top:34px}
+</style>
+</head>
+<body>
+<div class="aurora"><i></i><i></i><i></i></div>
+<div class="wrap">
+  <header>
+    <div class="logo"><svg viewBox="0 0 24 24" fill="#fff"><path d="M13 2 5 13h6l-1 9 9-12h-6l1-8z"/></svg></div>
+    <div>
+      <h1>闪渡</h1>
+      <div class="sub"><span class="dot off" id="dot"></span><span id="peer">正在连接手机…</span></div>
+    </div>
+  </header>
+
+  <div class="grid">
+    <section class="card">
+      <h2><svg viewBox="0 0 24 24" fill="none" stroke="#22D3EE" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>发送到手机</h2>
+      <div class="hint">拖拽文件到这里，或点击选择。任意大小，局域网直传，不经过任何服务器。</div>
+      <label class="drop" id="drop">
+        <input type="file" id="picker" multiple hidden>
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg></div>
+        <b>拖拽文件到此处</b><span>或点击选择文件（可多选）</span>
+      </label>
+      <div class="overall" id="overall">
+        <div class="row"><span class="tag" id="ovState">等待手机确认…</span><span class="info" id="ovSpeed"></span></div>
+        <div class="bar" id="ovBarWrap"><i id="ovBar"></i></div>
+      </div>
+      <div class="list" id="upList"></div>
+    </section>
+
+    <section class="card">
+      <div class="row">
+        <h2><svg viewBox="0 0 24 24" fill="none" stroke="#34D399" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>来自手机</h2>
+        <button class="btn ghost" id="dlAll" style="display:none">全部下载</button>
+      </div>
+      <div class="hint">在手机「雷达」中点选 <b id="meName">本浏览器</b>，文件会自动出现在这里并开始下载。</div>
+      <div class="list" id="inList"><div class="empty">暂时没有文件<br>保持此页面打开即可随时接收</div></div>
+    </section>
+  </div>
+  <footer>闪渡 FluxDrop · 局域网高速互传 · 关闭此页面即断开</footer>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+const cid = localStorage.fluxCid || (localStorage.fluxCid = Math.random().toString(36).slice(2) + Date.now().toString(36));
+const ua = navigator.userAgent;
+const os = /Windows/.test(ua) ? 'Windows' : /Android/.test(ua) ? 'Android' : /iPhone|iPad/.test(ua) ? 'iOS'
+  : /Mac OS X/.test(ua) ? 'Mac' : /CrOS/.test(ua) ? 'ChromeOS' : /Linux/.test(ua) ? 'Linux' : 'Web';
+const br = /Edg\//.test(ua) ? 'Edge' : /Firefox\//.test(ua) ? 'Firefox' : /Chrome\//.test(ua) ? 'Chrome' : /Safari\//.test(ua) ? 'Safari' : '浏览器';
+const myName = os + ' · ' + br;
+$('meName').textContent = myName;
+
+function fmt(b){ if(b<1024) return b+' B'; const u=['KB','MB','GB','TB']; let i=-1; do{b/=1024;i++}while(b>=1024&&i<u.length-1); return (b>=100?b.toFixed(0):b>=10?b.toFixed(1):b.toFixed(2))+' '+u[i]; }
+function ext(n){ const i=n.lastIndexOf('.'); return i>0 ? n.slice(i+1).slice(0,4).toUpperCase() : 'FILE'; }
+function grad(n){ const e=ext(n).toLowerCase();
+  if(/^(jpg|jpeg|png|gif|webp|heic|bmp)$/.test(e)) return 'linear-gradient(135deg,#22D3EE,#3B82F6)';
+  if(/^(mp4|mov|mkv|avi|webm|flv)$/.test(e)) return 'linear-gradient(135deg,#EC4899,#8B5CF6)';
+  if(/^(mp3|flac|wav|aac|m4a|ogg)$/.test(e)) return 'linear-gradient(135deg,#FBBF24,#F97316)';
+  if(/^(zip|rar|7z|tar|gz)$/.test(e)) return 'linear-gradient(135deg,#34D399,#059669)';
+  if(e==='apk') return 'linear-gradient(135deg,#34D399,#22D3EE)';
+  return 'linear-gradient(135deg,#60A5FA,#8B5CF6)'; }
+function esc(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function toast(t){ const el=$('toast'); el.textContent=t; el.classList.add('show'); clearTimeout(el._t); el._t=setTimeout(()=>el.classList.remove('show'),2600); }
+
+/* ---------------- 心跳 + 接收手机推送 ---------------- */
+const seen = new Set();
+const dlQueue = [];
+let dlBusy = false;
+function pumpDownloads(){
+  if(dlBusy || !dlQueue.length) return;
+  dlBusy = true;
+  const a = dlQueue.shift();
+  a.click();
+  setTimeout(()=>{ dlBusy=false; pumpDownloads(); }, 900);
+}
+async function poll(){
+  try{
+    const r = await fetch(`/api/web/poll?cid=${cid}&name=${encodeURIComponent(myName)}&os=${encodeURIComponent(os)}`, {cache:'no-store'});
+    const j = await r.json();
+    $('dot').className = 'dot';
+    $('peer').textContent = '已连接 ' + j.me.name;
+    document.title = '闪渡 · ' + j.me.name;
+    for(const it of j.items){ if(!seen.has(it.id)){ seen.add(it.id); addIncoming(it); } }
+  }catch(e){
+    $('dot').className = 'dot off';
+    $('peer').textContent = '与手机的连接已断开，正在重试…';
+  }
+  setTimeout(poll, 1500);
+}
+function addIncoming(it){
+  const list = $('inList'); const empty = list.querySelector('.empty'); if(empty) empty.remove();
+  const el = document.createElement('div'); el.className = 'item';
+  el.innerHTML = `<div class="ficon" style="background:${grad(it.name)}">${esc(ext(it.name))}</div>
+    <div class="meta"><div class="name">${esc(it.name)}</div><div class="info">${fmt(it.size)} · 来自 ${esc(it.from||'手机')}</div></div>
+    <a class="btn" href="/api/download/${encodeURIComponent(it.id)}" download="${esc(it.name)}">下载</a>`;
+  list.prepend(el);
+  $('dlAll').style.display = 'inline-flex';
+  dlQueue.push(el.querySelector('a')); pumpDownloads();
+  toast('收到文件：' + it.name);
+}
+$('dlAll').onclick = () => { document.querySelectorAll('#inList a.btn').forEach(a => dlQueue.push(a)); pumpDownloads(); };
+
+/* ---------------- 发送到手机 ---------------- */
+const drop = $('drop'), picker = $('picker');
+picker.onchange = () => { if(picker.files.length) send([...picker.files]); picker.value = ''; };
+['dragenter','dragover'].forEach(ev => window.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('over'); }));
+['dragleave','drop'].forEach(ev => window.addEventListener(ev, e => { e.preventDefault(); if(ev==='drop' || !e.relatedTarget) drop.classList.remove('over'); }));
+window.addEventListener('drop', e => { const fs = [...(e.dataTransfer?.files||[])].filter(f => f.size > 0 || f.type); if(fs.length) send(fs); });
+
+function addUpRow(f){
+  const el = document.createElement('div'); el.className = 'item';
+  el.innerHTML = `<div class="ficon" style="background:${grad(f.name)}">${esc(ext(f.name))}</div>
+    <div class="meta"><div class="row"><div class="name">${esc(f.name)}</div><span class="tag wait">排队中</span></div>
+    <div class="bar"><i></i></div></div>`;
+  $('upList').prepend(el);
+  const bar = el.querySelector('.bar'), fill = bar.querySelector('i'), tag = el.querySelector('.tag');
+  let finished = false;
+  return {
+    progress(p){ fill.style.width = (p*100).toFixed(1)+'%'; tag.className='tag'; tag.style.color='var(--mid)'; tag.textContent = Math.floor(p*100)+'%'; },
+    ok(){ finished = true; fill.style.width='100%'; bar.classList.add('done'); tag.className='tag ok'; tag.style.color=''; tag.textContent='完成'; },
+    fail(m){ if(finished) return; finished = true; bar.classList.add('fail'); fill.style.width='100%'; tag.className='tag err'; tag.style.color=''; tag.textContent=m; }
+  };
+}
+function setOv(text, cls, p, speed){
+  $('overall').style.display = 'block';
+  const s = $('ovState'); s.textContent = text; s.className = 'tag ' + cls;
+  $('ovSpeed').textContent = speed || '';
+  const w = $('ovBarWrap'); w.className = 'bar' + (cls==='ok' ? ' done' : cls==='err' ? ' fail' : '');
+  if(p != null) $('ovBar').style.width = (p*100).toFixed(1) + '%';
+}
+function upload(session, index, file, onp){
+  return new Promise((res, rej) => {
+    const x = new XMLHttpRequest();
+    x.open('POST', `/api/upload?session=${encodeURIComponent(session)}&index=${index}`);
+    x.upload.onprogress = e => onp(e.loaded);
+    x.onload = () => x.status === 200 ? res() : rej(new Error('HTTP ' + x.status));
+    x.onerror = () => rej(new Error('网络错误'));
+    x.send(file);
+  });
+}
+let busy = false; const queue = [];
+async function send(files){
+  if(busy){ queue.push(files); toast('已加入发送队列'); return; }
+  busy = true;
+  const rows = files.map(addUpRow);
+  setOv('等待手机确认接收…', 'wait', 0, '');
+  try{
+    const r = await fetch('/api/session', { method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ senderId: cid, senderName: myName, senderKind: (os==='Android'||os==='iOS') ? 'PHONE' : 'PC',
+        files: files.map(f => ({ name: f.name, size: f.size, mime: f.type || '' })) }) });
+    if(r.status === 403){ setOv('手机拒绝了接收（或超时未确认）', 'err', 1, ''); rows.forEach(x => x.fail('已拒绝')); return; }
+    if(!r.ok) throw new Error('HTTP ' + r.status);
+    const { session } = await r.json();
+    const total = files.reduce((a, f) => a + f.size, 0) || 1;
+    let base = 0; const t0 = performance.now();
+    for(let i = 0; i < files.length; i++){
+      await upload(session, i, files[i], loaded => {
+        rows[i].progress(files[i].size ? loaded / files[i].size : 1);
+        const done = base + loaded, sec = Math.max((performance.now() - t0) / 1000, 0.001);
+        setOv(`正在发送 ${i+1}/${files.length}`, 'wait', done / total, `${fmt(done)} / ${fmt(total)} · ${fmt(done/sec)}/s`);
+      });
+      rows[i].ok(); base += files[i].size;
+    }
+    const sec = Math.max((performance.now() - t0) / 1000, 0.001);
+    setOv(`发送完成 · ${files.length} 个文件`, 'ok', 1, `${fmt(total)} · 平均 ${fmt(total/sec)}/s`);
+    toast('发送完成 ✓');
+  }catch(e){
+    setOv('发送失败：' + e.message, 'err', null, '');
+    rows.forEach(x => x.fail('失败'));
+  }finally{
+    busy = false;
+    if(queue.length) send(queue.shift());
+  }
+}
+poll();
+</script>
+</body>
+</html>
